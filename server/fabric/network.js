@@ -14,10 +14,10 @@ import util from 'util';
  */
 class FabricNetwork {
 
-    #gatewayDiscovery;
-    #appAdmin;
-    #orgMSPID;
-    #ccp;
+    _gatewayDiscovery;
+    _appAdmin;
+    _orgMSPID;
+    _ccp;
 
     /**
      * Create a new FabricNetwork instance.
@@ -30,10 +30,10 @@ class FabricNetwork {
         const ccpPath = path.join(process.cwd(), connectionFile);
         const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
         
-        this.#gatewayDiscovery = config.gatewayDiscovery;
-        this.#appAdmin = config.appAdmin;
-        this.#orgMSPID = config.orgMSPID;
-        this.#ccp = JSON.parse(ccpJSON);
+        this._gatewayDiscovery = config.gatewayDiscovery;
+        this._appAdmin = config.appAdmin;
+        this._orgMSPID = config.orgMSPID;
+        this._ccp = JSON.parse(ccpJSON);
     }
 
     /**
@@ -53,7 +53,7 @@ class FabricNetwork {
                 walletPath,
                 userName, 
                 wallet: util.inspect(wallet),
-                ccp: util.inspect(this.#ccp)
+                ccp: util.inspect(this._ccp)
             });
 
             const userExists = await wallet.exists(userName);
@@ -63,7 +63,7 @@ class FabricNetwork {
                 return response;
             }
 
-            await gateway.connect(ccp, { wallet, identity: userName, discovery: this.#gatewayDiscovery });
+            await gateway.connect(this._ccp, { wallet, identity: userName, discovery: this._gatewayDiscovery });
             
             const network = await gateway.getNetwork('mychannel');
             l.info('connected to channel');
@@ -169,7 +169,7 @@ class FabricNetwork {
                 return response;
             }
 
-            const adminExists = await wallet.exists(this.#appAdmin);
+            const adminExists = await wallet.exists(this._appAdmin);
             if (!adminExists) {
                 const msg = `An identity for the Admin user does not exist in the wallet`;
                 l.error(`${msg}. Run the enrollAdmin.js script before retrying`);
@@ -180,14 +180,14 @@ class FabricNetwork {
             }
 
             const gateway = new Gateway();
-            await gateway.connect(this.#ccp, { wallet, identity: this.#appAdmin, discovery: this.#gatewayDiscovery });
+            await gateway.connect(this._ccp, { wallet, identity: this._appAdmin, discovery: this._gatewayDiscovery });
 
             const ca = gateway.getClient().getCertificateAuthority();
             const adminIdentity = gateway.getCurrentIdentity();
             const secret = ca.register({ affiliation: 'org1', enrollmentID: voterId, role: 'client' }, adminIdentity);
 
             const enrollment = await ca.enroll({ enrollmentID: voterId, enrollmentSecret: secret });
-            const userIdentity = await X509WalletMixin.createIdentity(this.#orgMSPID, enrollment.certificate, enrollment.key.toBytes());
+            const userIdentity = await X509WalletMixin.createIdentity(this._orgMSPID, enrollment.certificate, enrollment.key.toBytes());
             await wallet.import(voterId, userIdentity);
             const msg = `Successfully registered voter ${firstName} ${lastName}`;
             l.info(msg);
