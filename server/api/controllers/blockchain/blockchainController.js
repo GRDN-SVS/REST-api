@@ -47,12 +47,12 @@ export class BlockchainController {
     async validateVoter(req, res) {
         let networkObj = await fabricNetwork.connectToNetwork(req.body.voterId);
         if (networkObj.error) {
-            res.send(networkObj.error);
+            res.send(networkObj);
         }
 
         let invokeResponse = await fabricNetwork.invoke(networkObj, true, 'readVote', req.body.voterId);
         if (invokeResponse.error) {
-            res.send(invokeResponse.error);
+            res.send(invokeResponse);
         }
         else {
             let parsedResponse = JSON.parse(invokeResponse);
