@@ -3,7 +3,6 @@ import l from '../common/logger';
 
 import path from 'path';
 import fs from 'fs';
-import util from 'util';
 
 /**
  * Class that contains all the logic necessary to connect the application
@@ -49,13 +48,6 @@ class FabricNetwork {
             const walletPath = path.join(process.cwd(), 'wallet');
             const wallet = new FileSystemWallet(walletPath);
 
-            l.info({
-                walletPath,
-                userName, 
-                wallet: util.inspect(wallet),
-                ccp: util.inspect(this._ccp)
-            });
-
             const userExists = await wallet.exists(userName);
             if (!userExists) {
                 let response = {};
@@ -67,7 +59,7 @@ class FabricNetwork {
             
             const network = await gateway.getNetwork('mychannel');
             l.info('connected to channel');
-            const contract = await network.getContract('vote-contract');
+            const contract = network.getContract('vote-contract');
 
             const networkObj = {
                 contract,
@@ -78,7 +70,7 @@ class FabricNetwork {
             return networkObj;
         }
         catch (error) {
-            l.error(`Error processing transaction: ${error}`);
+            l.error(`Error connecting to network and processing transaction: ${error}`);
             let response = {};
             response.error = error;
             
@@ -149,12 +141,6 @@ class FabricNetwork {
      * @returns success or failure message.
      */
     async registerVoter(voterId, registrarId, firstName, lastName) {
-        if (!voterId || !registrarId || !firstName || !lastName) {
-            let response = {};
-            response.error = `You need to fill all fields before you can register!`;
-            return response;
-        }
-
         try {
             const walletPath = path.join(process.cwd(), 'wallet');
             const wallet = new FileSystemWallet(walletPath);
@@ -163,7 +149,7 @@ class FabricNetwork {
             if (userExists) {
                 let response = {};
                 const msg = `An identity for the user ${voterId} already exists in the wallet`;
-                l.info(msg);
+                l.warn(msg);
                 response.error = `${msg}. Please enter a different one to proceed.`;
 
                 return response;
@@ -182,16 +168,12 @@ class FabricNetwork {
             const gateway = new Gateway();
             await gateway.connect(this._ccp, { wallet, identity: this._appAdmin, discovery: this._gatewayDiscovery });
 
-            l.info("Connected to gateway");
-
             const ca = gateway.getClient().getCertificateAuthority();
             const adminIdentity = gateway.getCurrentIdentity();
             const secret = await ca.register({ affiliation: 'org1', enrollmentID: voterId, role: 'client' }, adminIdentity);
 
-            l.info("Registered user");
-
             const enrollment = await ca.enroll({ enrollmentID: voterId, enrollmentSecret: secret });
-            const userIdentity = await X509WalletMixin.createIdentity(this._orgMSPID, enrollment.certificate, enrollment.key.toBytes());
+            const userIdentity = X509WalletMixin.createIdentity(this._orgMSPID, enrollment.certificate, enrollment.key.toBytes());
             await wallet.import(voterId, userIdentity);
             const msg = `Successfully registered voter ${firstName} ${lastName}`;
             l.info(msg);

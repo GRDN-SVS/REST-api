@@ -3,7 +3,12 @@ import l from '../../../common/logger';
 
 export class BlockchainController {
 
-    /** Vote for an available option, consuming the voters ballot */
+    /** 
+     * Vote for an available option, consuming the voter's ballot.
+     * 
+     * @param req.body.voterId the id of an already registered voter.
+     * @param req.body.electionId the id of the election in which to vote will take place.
+     */
     async castBallot(req, res) {
         let networkObj = await fabricNetwork.connectToNetwork(req.body.voterId);
         req.body = JSON.stringify(req.body);
@@ -18,7 +23,15 @@ export class BlockchainController {
         }
     }
 
-    /** Get voter info, create voter, and update state with their voterId */
+    /** 
+     * Get voter info, create voter, and update the blockchain state,
+     * ultimately registering the user as a valid voter.
+     * 
+     * @param req.body.voterId the id of a new voter.
+     * @param req.body.registrarId the id of a valid registrar.
+     * @param req.body.firstName the new voter's first name.
+     * @param req.body.lastName the new voter's last name.
+     */
     async registerVoter(req, res) {
         let voterId = req.body.voterId;
 
@@ -35,18 +48,21 @@ export class BlockchainController {
             let args = [req.body];
 
             let invokeResponse = await fabricNetwork.invoke(networkObj, false, 'createVoter', args);
-            l.info(invokeResponse)
             if (invokeResponse.error) {
                 return res.send(invokeResponse.error);
             }
             else {
-                return res.send({msg: "SUCCESS"})
-                // return res.send(JSON.parse(invokeResponse));
+                return res.send(response);
             }
         }
     }
 
-    /** Used as a way to log in the user to the app and make sure they haven't voted before. */
+    /** 
+     * Used as a way to log in the user to the app and make sure
+     * they haven't voted before. 
+     * 
+     * @param req.body.voterId the id of an already registered voter.
+     */
     async validateVoter(req, res) {
         let networkObj = await fabricNetwork.connectToNetwork(req.body.voterId);
         if (networkObj.error) {

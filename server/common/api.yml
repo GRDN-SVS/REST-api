@@ -1,15 +1,19 @@
 openapi: 3.0.1
+
 info:
   title: REST-api
   description: A REST api that exposes services to GRDN apps
   version: 1.0.0
+
 servers:
   - url: /grdn/api
+
 tags:
   - name: Examples
     description: Simple example endpoints
   - name: Specification
     description: The swagger API specification
+
 paths:
   /blockchain/castBallot:
     post:
@@ -42,6 +46,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
   /blockchain/registerVoter:
     post:
       tags:
@@ -73,6 +78,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
   /blockchain/validateVoter:
     post:
       tags:
@@ -104,6 +110,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
   /examples:
     get:
       tags:
@@ -160,6 +167,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
   /examples/{id}:
     get:
       tags:
@@ -190,6 +198,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
   /spec:
     get:
       tags:
@@ -198,6 +207,7 @@ paths:
         200:
           description: Return the API specification
           content: {}
+
 components:
   schemas:
     Example:
