@@ -67,7 +67,7 @@ class FabricNetwork {
             
             const network = await gateway.getNetwork('mychannel');
             l.info('connected to channel');
-            const contract = await network.getContract('VoteContract');
+            const contract = await network.getContract('vote-contract');
 
             const networkObj = {
                 contract,
@@ -182,9 +182,13 @@ class FabricNetwork {
             const gateway = new Gateway();
             await gateway.connect(this._ccp, { wallet, identity: this._appAdmin, discovery: this._gatewayDiscovery });
 
+            l.info("Connected to gateway");
+
             const ca = gateway.getClient().getCertificateAuthority();
             const adminIdentity = gateway.getCurrentIdentity();
-            const secret = ca.register({ affiliation: 'org1', enrollmentID: voterId, role: 'client' }, adminIdentity);
+            const secret = await ca.register({ affiliation: 'org1', enrollmentID: voterId, role: 'client' }, adminIdentity);
+
+            l.info("Registered user");
 
             const enrollment = await ca.enroll({ enrollmentID: voterId, enrollmentSecret: secret });
             const userIdentity = await X509WalletMixin.createIdentity(this._orgMSPID, enrollment.certificate, enrollment.key.toBytes());

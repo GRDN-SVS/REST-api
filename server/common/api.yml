@@ -11,6 +11,99 @@ tags:
   - name: Specification
     description: The swagger API specification
 paths:
+  /blockchain/castBallot:
+    post:
+      tags:
+        - Blockchain
+      description: Vote for a valid option of an election
+      requestBody:
+        description: Body needed to cast the ballot
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/castBallot'  
+        required: true
+      responses:
+        201:
+          description: Ballot was casted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voter'     
+        4XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /blockchain/registerVoter:
+    post:
+      tags:
+        - Blockchain
+      description: Register a new voter
+      requestBody:
+        description: New voter
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerVoter'     #TODO: Verify Schema
+        required: true
+      responses:
+        201:
+          description: Voter registered
+          content:
+            applicaction/json:
+              schema:
+                $ref: '#/components/schemas/Voter'       #TODO: Verify Schema
+        4XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /blockchain/validateVoter:
+    post:
+      tags:
+        - Blockchain
+      description: Check if the voter can vote
+      requestBody:
+        description: Body needed to validate the voter
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/validateVoter'     
+        required: true
+      responses:
+        201:
+          description: Voter can vote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voter'        
+        4XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /examples:
     get:
       tags:
@@ -129,3 +222,48 @@ components:
         name:
           type: string
           example: no_stress
+
+    Voter:
+      type: object
+      properties:
+        voterId: 
+          type: string
+    
+    validateVoter:
+      title: Validate Voter
+      required:
+        - voterId
+      type: object
+      properties:
+        voterId:
+          type: string
+        
+    registerVoter:
+      title: Register Voter
+      required:
+        - voterId
+        - registrarId
+        - firstName
+        - lastName
+      type: object
+      properties:
+        voterId:
+          type: string
+        registrarId:
+          type: string
+        firstName:
+          type: string
+        lastName: 
+          type: string
+
+    castBallot:
+      title: Cast Ballot
+      required:
+        - voterId
+        - electionId
+      type: object
+      properties:
+        voterId: 
+          type: string
+        electionId:
+          type: string
