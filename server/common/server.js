@@ -17,16 +17,16 @@ export default class ExpressServer {
         const root = path.normalize(`${__dirname}/../..`);
         app.set('appPath', `${root}client`);
         app.use(
-            bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' })
+            bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }),
         );
         app.use(
             bodyParser.urlencoded({
                 extended: true,
                 limit: process.env.REQUEST_LIMIT || '100kb',
-            })
+            }),
         );
         app.use(
-            bodyParser.text({ limit: process.env.REQUEST_LIMIT || '100kb' })
+            bodyParser.text({ limit: process.env.REQUEST_LIMIT || '100kb' }),
         );
         app.use(cookieParser(process.env.SESSION_SECRET));
         app.use(Express.static(`${root}/public`));
@@ -41,7 +41,7 @@ export default class ExpressServer {
         const welcome = p => () =>
             l.info(
                 `up and running in ${process.env.NODE_ENV ||
-                    'development'} @: ${os.hostname()} on port: ${p}}`
+                    'development'} @: ${os.hostname()} on port: ${p}}`,
             );
 
         oas(app, this.routes)

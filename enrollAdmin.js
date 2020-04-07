@@ -1,4 +1,3 @@
-
 /*
  * Helper node script that enrolls a the admin of the app into the
  * blockchain network, creates a file system wallet and imports the
@@ -39,8 +38,15 @@ async function main() {
         }
 
         // enroll the admin user and import its identity to the wallet
-        const enrollment = await ca.enroll({ enrollmentID: appAdmin, enrollmentSecret: appAdminSecret });
-        const identity = X509WalletMixin.createIdentity(orgMSPID, enrollment.certificate, enrollment.key.toBytes());
+        const enrollment = await ca.enroll({
+            enrollmentID: appAdmin,
+            enrollmentSecret: appAdminSecret,
+        });
+        const identity = X509WalletMixin.createIdentity(
+            orgMSPID,
+            enrollment.certificate,
+            enrollment.key.toBytes(),
+        );
         wallet.import(appAdmin, identity);
         console.log(`Successfully enrolled the user ${appAdmin} and imported it into the wallet`);
     }

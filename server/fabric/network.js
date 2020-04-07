@@ -7,7 +7,7 @@ import fs from 'fs';
 /**
  * Class that contains all the logic necessary to connect the application
  * to a hyperledger fabric blockchain network.
- * 
+ *
  * It is intended to be used as a singleton, that is why only an instance
  * of should be exported.
  */
@@ -28,7 +28,7 @@ class FabricNetwork {
         const connectionFile = config.connection_file;
         const ccpPath = path.join(process.cwd(), connectionFile);
         const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
-        
+
         this._gatewayDiscovery = config.gatewayDiscovery;
         this._appAdmin = config.appAdmin;
         this._orgMSPID = config.orgMSPID;
@@ -37,7 +37,7 @@ class FabricNetwork {
 
     /**
      * Connect to the network using a specific user name as the identity.
-     * 
+     *
      * @param userName The name of a user that is already enrolled in the network.
      * @returns a network object, which contains the contract, network and gateway associated to the identity.
      */
@@ -55,8 +55,12 @@ class FabricNetwork {
                 return response;
             }
 
-            await gateway.connect(this._ccp, { wallet, identity: userName, discovery: this._gatewayDiscovery });
-            
+            await gateway.connect(this._ccp, {
+                wallet,
+                identity: userName,
+                discovery: this._gatewayDiscovery,
+            });
+
             const network = await gateway.getNetwork('mychannel');
             l.info('connected to channel');
             const contract = network.getContract('vote-contract');
@@ -64,7 +68,7 @@ class FabricNetwork {
             const networkObj = {
                 contract,
                 network,
-                gateway
+                gateway,
             };
 
             return networkObj;
@@ -73,7 +77,7 @@ class FabricNetwork {
             l.error(`Error connecting to network and processing transaction: ${error}`);
             let response = {};
             response.error = error;
-            
+
             return response;
         }
     }
@@ -81,7 +85,7 @@ class FabricNetwork {
     /**
      * Invokes a function from the smart contract, either to process a
      * transaction or to evaluate a query.
-     * 
+     *
      * @param networkObj object that contains the contract, network and gateway associated to an identity.
      * @param isQuery true if what will be invoked is a query to the blockchain, false otherwise.
      * @param func function to be invoked from the smart contract.
@@ -92,7 +96,10 @@ class FabricNetwork {
         try {
             if (isQuery === true) {
                 if (args) {
-                    let response = await networkObj.contract.evaluateTransaction(func, args);
+                    let response = await networkObj.contract.evaluateTransaction(
+                        func,
+                        args,
+                    );
                     l.info(`Transaction ${func} with args ${args} has been evaluated`);
                     await networkObj.gateway.disconnect();
 
@@ -110,14 +117,19 @@ class FabricNetwork {
                 if (args) {
                     args = JSON.parse(args[0]);
                     args = JSON.stringify(args);
-                    let response = await networkObj.contract.submitTransaction(func, args);
+                    let response = await networkObj.contract.submitTransaction(
+                        func,
+                        args,
+                    );
                     l.info(`Transaction ${func} with args ${args} has been submitted`);
                     await networkObj.gateway.disconnect();
 
                     return response;
                 }
                 else {
-                    let response = await networkObj.contract.submitTransaction(func);
+                    let response = await networkObj.contract.submitTransaction(
+                        func,
+                    );
                     l.info(`Transaction ${func} without args has been submitted`);
                     await networkObj.gateway.disconnect();
 
@@ -133,7 +145,7 @@ class FabricNetwork {
 
     /**
      * Register a voter into the wallet.
-     * 
+     *
      * @param voterId ID that the voter.
      * @param registrarId ID of a valid registrar.
      * @param firstName First name of the voter.
@@ -157,23 +169,37 @@ class FabricNetwork {
 
             const adminExists = await wallet.exists(this._appAdmin);
             if (!adminExists) {
-                const msg = `An identity for the Admin user does not exist in the wallet`;
+                const msg = 'An identity for the Admin user does not exist in the wallet';
                 l.error(`${msg}. Run the enrollAdmin.js script before retrying`);
                 let response = {};
                 response.error = msg;
-                
+
                 return response;
             }
 
             const gateway = new Gateway();
-            await gateway.connect(this._ccp, { wallet, identity: this._appAdmin, discovery: this._gatewayDiscovery });
+            await gateway.connect(this._ccp, {
+                wallet,
+                identity: this._appAdmin,
+                discovery: this._gatewayDiscovery,
+            });
 
             const ca = gateway.getClient().getCertificateAuthority();
             const adminIdentity = gateway.getCurrentIdentity();
-            const secret = await ca.register({ affiliation: 'org1', enrollmentID: voterId, role: 'client' }, adminIdentity);
+            const secret = await ca.register(
+                { affiliation: 'org1', enrollmentID: voterId, role: 'client' },
+                adminIdentity,
+            );
 
-            const enrollment = await ca.enroll({ enrollmentID: voterId, enrollmentSecret: secret });
-            const userIdentity = X509WalletMixin.createIdentity(this._orgMSPID, enrollment.certificate, enrollment.key.toBytes());
+            const enrollment = await ca.enroll({
+                enrollmentID: voterId,
+                enrollmentSecret: secret,
+            });
+            const userIdentity = X509WalletMixin.createIdentity(
+                this._orgMSPID,
+                enrollment.certificate,
+                enrollment.key.toBytes(),
+            );
             await wallet.import(voterId, userIdentity);
             const msg = `Successfully registered voter ${firstName} ${lastName}`;
             l.info(msg);

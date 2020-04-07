@@ -17,7 +17,7 @@ export default function oas(app, routes) {
         .then(() => {
             app.use(
                 process.env.OPENAPI_SPEC || '/spec',
-                Express.static(apiSpec)
+                Express.static(apiSpec),
             );
             routes(app);
             app.use(errorHandler);

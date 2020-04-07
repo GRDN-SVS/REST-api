@@ -17,7 +17,7 @@ export class Controller {
             res
                 .status(201)
                 .location(`/grdn/api/examples/${r.id}`)
-                .json(r)
+                .json(r),
         );
     }
 }

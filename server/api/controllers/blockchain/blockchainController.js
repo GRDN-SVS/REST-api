@@ -1,11 +1,9 @@
 import fabricNetwork from '../../../fabric/network';
-import l from '../../../common/logger';
 
 export class BlockchainController {
-
-    /** 
+    /**
      * Vote for an available option, consuming the voter's ballot.
-     * 
+     *
      * @param req.body.voterId the id of an already registered voter.
      * @param req.body.electionId the id of the election in which to vote will take place.
      */
@@ -14,7 +12,13 @@ export class BlockchainController {
         req.body = JSON.stringify(req.body);
         let args = [req.body];
 
-        let response = await fabricNetwork.invoke(networkObj, false, 'castVote', args);
+        let response = await fabricNetwork.invoke(
+            networkObj,
+            false,
+            'castVote',
+            args,
+        );
+
         if (response.error) {
             return res.send(response.error);
         }
@@ -23,10 +27,10 @@ export class BlockchainController {
         }
     }
 
-    /** 
+    /**
      * Get voter info, create voter, and update the blockchain state,
      * ultimately registering the user as a valid voter.
-     * 
+     *
      * @param req.body.voterId the id of a new voter.
      * @param req.body.registrarId the id of a valid registrar.
      * @param req.body.firstName the new voter's first name.
@@ -35,7 +39,13 @@ export class BlockchainController {
     async registerVoter(req, res) {
         let voterId = req.body.voterId;
 
-        let response = await fabricNetwork.registerVoter(voterId, req.body.registrarId, req.body.firstName, req.body.lastName);
+        let response = await fabricNetwork.registerVoter(
+            voterId,
+            req.body.registrarId,
+            req.body.firstName,
+            req.body.lastName,
+        );
+
         if (response.error) {
             return res.send(response.error);
         }
@@ -47,7 +57,13 @@ export class BlockchainController {
             req.body = JSON.stringify(req.body);
             let args = [req.body];
 
-            let invokeResponse = await fabricNetwork.invoke(networkObj, false, 'createVoter', args);
+            let invokeResponse = await fabricNetwork.invoke(
+                networkObj,
+                false,
+                'createVoter',
+                args,
+            );
+
             if (invokeResponse.error) {
                 return res.send(invokeResponse.error);
             }
@@ -57,10 +73,10 @@ export class BlockchainController {
         }
     }
 
-    /** 
+    /**
      * Used as a way to log in the user to the app and make sure
-     * they haven't voted before. 
-     * 
+     * they haven't voted before.
+     *
      * @param req.body.voterId the id of an already registered voter.
      */
     async validateVoter(req, res) {
@@ -69,7 +85,13 @@ export class BlockchainController {
             return res.send(networkObj);
         }
 
-        let invokeResponse = await fabricNetwork.invoke(networkObj, true, 'readVote', req.body.voterId);
+        let invokeResponse = await fabricNetwork.invoke(
+            networkObj,
+            true,
+            'readVote',
+            req.body.voterId,
+        );
+        
         if (invokeResponse.error) {
             return res.send(invokeResponse);
         }
@@ -83,7 +105,6 @@ export class BlockchainController {
             return res.send(parsedResponse);
         }
     }
-
 }
 
 export default new BlockchainController();
