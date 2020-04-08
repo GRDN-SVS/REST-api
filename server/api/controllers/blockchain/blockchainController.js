@@ -1,4 +1,6 @@
+import l from '../../../common/logger';
 import fabricNetwork from '../../../fabric/network';
+import anonymityNetworkService from '../../services/anonymityNet/anonymityNet.service';
 
 export class BlockchainController {
     /**
@@ -6,6 +8,7 @@ export class BlockchainController {
      *
      * @param req.body.voterId the id of an already registered voter.
      * @param req.body.electionId the id of the election in which to vote will take place.
+     * @param req.body.optionId the id of a valid option within the specified election.
      */
     async castBallot(req, res) {
         let networkObj = await fabricNetwork.connectToNetwork(req.body.voterId);
@@ -23,7 +26,31 @@ export class BlockchainController {
             return res.send(response.error);
         }
         else {
-            return res.send(response);
+            let parsedResponse = JSON.parse(response);
+            if (parsedResponse.error) {
+                return res.send(parsedResponse);
+            }
+            else {
+                try {
+                    let netResponse = await anonymityNetworkService.send(
+                        req.body.electionId,
+                        req.body.voterId,
+                        req.body.optionId,
+                    );
+                    let responsesObj = { 
+                        blockchain: response,
+                        anonymityNet: netResponse,
+                    };
+                    return res.send(responsesObj);
+                }
+                catch (error) {
+                    const msg = `Connection to the anonymity net failed: ${error}`;
+                    l.error(msg);
+                    let errorResponse = {};
+                    errorResponse.error = msg;
+                    return res.send(errorResponse);
+                }
+            }
         }
     }
 

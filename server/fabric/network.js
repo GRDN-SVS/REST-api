@@ -203,7 +203,8 @@ class FabricNetwork {
             await wallet.import(voterId, userIdentity);
             const msg = `Successfully registered voter ${firstName} ${lastName}`;
             l.info(msg);
-            let response = msg;
+            let response = {};
+            response.success = msg;
 
             return response;
         }
