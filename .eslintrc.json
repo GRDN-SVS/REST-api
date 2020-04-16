@@ -1,10 +1,10 @@
 {
     "parser": "babel-eslint",
-    "extends": ["eslint:recommended", "plugin:node/recommended", "prettier"],
+    "extends": ["eslint:recommended", "plugin:node/recommended"],
     "env": {
       "mocha": true
     },
-    "plugins": ["prettier", "node"],
+    "plugins": ["node"],
     "parserOptions": {
       "sourceType": "module"
     },
@@ -12,15 +12,15 @@
       "no-unused-vars": 2,
       "node/no-unsupported-features/es-syntax": 0,
       "node/no-unpublished-import": ["off"],
-      "prettier/prettier": [
-        "error",
-        {
-          "singleQuote": true,
-          "trailingComma": "es5",
-          "bracketSpacing": true,
-          "jsxBracketSameLine": true,
-          "printWidth": 80
-        }
-      ]
+      "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
+      "max-len": ["warn", { "code": 80 }],
+      "indent": ["error", 4],
+      "semi": ["error", "always"],
+      "quotes": ["error", "single"],
+      "comma-dangle": ["error", "only-multiline"],
+      "object-curly-spacing": ["error", "always"],
+      "arrow-parens": ["error", "as-needed"],
+      "linebreak-style": ["error", "unix"],
+      "no-process-exit": "warn"
     }
   }
