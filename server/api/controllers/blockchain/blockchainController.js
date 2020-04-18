@@ -1,6 +1,9 @@
 import l from '../../../common/logger';
 import fabricNetwork from '../../../fabric/network';
+import encrypter from '../../../crypto/encrypter';
 import anonymityNetworkService from '../../services/anonymityNet/anonymityNet.service';
+import judgeService from '../../services/judge/judge.service';
+import scrutinizerService from '../../services/scrutinizer/scrutinizer.service';
 
 export class BlockchainController {
     /**
@@ -11,6 +14,7 @@ export class BlockchainController {
      * @param req.body.optionId the id of a valid option within the specified election.
      */
     async castBallot(req, res) {
+
         let networkObj = await fabricNetwork.connectToNetwork(req.body.voterId);
         req.body = JSON.stringify(req.body);
         let args = [req.body];
@@ -32,15 +36,26 @@ export class BlockchainController {
             }
             else {
                 try {
-                    let netResponse = await anonymityNetworkService.send(
-                        req.body.electionId,
-                        req.body.voterId,
-                        req.body.optionId,
-                    );
-                    let responsesObj = { 
+                    // REQUEST id and nonce
+                    let netResponse = await anonymityNetworkService.requestNonce(); 
+                    let xorVote = encrypter.xor(req.optionId, netResponse.nonce);
+
+                    const scrutinizerPublicKey = await scrutinizerService.requestPublicKey();
+
+                    let encryptedOption = encrypter.seal(xorVote, nonce, scrutinizerPublicKey);
+
+                    let vote = {
+                        nonceId: netResponse.id,
+                        option: encryptedOption
+                    }
+
+                    let judgeResponse = await judgeService.sendEncryptedContent(vote);
+                    
+                    let responsesObj = {
                         blockchain: response,
-                        anonymityNet: netResponse,
+                        judge: judgeResponse,
                     };
+
                     return res.send(responsesObj);
                 }
                 catch (error) {
