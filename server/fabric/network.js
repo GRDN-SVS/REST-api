@@ -139,7 +139,9 @@ class FabricNetwork {
         }
         catch (error) {
             l.error(`Failed to submit transaction: ${error}`);
-            return error;
+            let response = {};
+            response.error = error;
+            return response;
         }
     }
 

@@ -15,6 +15,7 @@ tags:
     description: The swagger API specification
 
 paths:
+
   /blockchain/castBallot:
     post:
       tags:
@@ -25,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/castBallot'  
+              $ref: '#/components/schemas/CastBallotRequest'  
         required: true
       responses:
         201:
@@ -33,7 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Voter'     
+                $ref: '#/components/schemas/CastBallotResponse'     
         4XX:
           description: Route not found
           content:
@@ -46,6 +47,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /blockchain/registerVoter:
     post:
       tags:
@@ -77,17 +79,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /blockchain/validateVoter:
     post:
       tags:
         - Blockchain
-      description: Check if the voter can vote
+      description: Check if the voter can actually vote
       requestBody:
         description: Body needed to validate the voter
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/validateVoter'     
+              $ref: '#/components/schemas/ValidateVoterRequest'
         required: true
       responses:
         201:
@@ -95,7 +98,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Voter'        
+                $ref: '#/components/schemas/ValidateVoterResponse'
         4XX:
           description: Route not found
           content:
@@ -108,6 +111,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /examples:
     get:
       tags:
@@ -164,6 +168,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /examples/{id}:
     get:
       tags:
@@ -194,6 +199,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+                
   /spec:
     get:
       tags:
@@ -205,6 +211,7 @@ paths:
 
 components:
   schemas:
+
     Example:
       type: object
       properties:
@@ -214,9 +221,11 @@ components:
         name:
           type: string
           example: example 3
+    
     Error:
       type: object
       additionalProperties: true
+
     ExampleBody:
       title: example
       required:
@@ -226,19 +235,31 @@ components:
         name:
           type: string
           example: no_stress
+
     Voter:
       type: object
       properties:
         voterId: 
           type: string
-    validateVoter:
-      title: Validate Voter
+
+    ValidateVoterRequest:
+      title: Validate Voter Request Body
       required:
         - voterId
       type: object
       properties:
         voterId:
           type: string
+
+    ValidateVoterResponse:
+      title: Validate Voter Response
+      type: object
+      properties:
+        voter: 
+          type: object
+        error:
+          type: string
+
     registerVoter:
       title: Register Voter
       required:
@@ -256,8 +277,9 @@ components:
           type: string
         lastName: 
           type: string
-    castBallot:
-      title: Cast Ballot
+
+    CastBallotRequest:
+      title: Cast Ballot Request
       required:
         - voterId
         - electionId
@@ -266,4 +288,13 @@ components:
         voterId: 
           type: string
         electionId:
+          type: string
+
+    CastBallotResponse:
+      title: Cast Ballot Response
+      type: object
+      properties:
+        success: 
+          type: string
+        error:
           type: string
