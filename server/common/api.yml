@@ -171,18 +171,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /election/getResults/{electionId}:
+  /election/getResults:
     get:
       tags:
         - Results
       description: Request election results
-      parameters:
-        - name: electionId
-          in: path
-          description: The id of the election
-          required: true
-          schema:
-            type: string
       responses:
         200:
           description: Return the results
@@ -445,12 +438,3 @@ components:
           type: string
         clientPublicKey:
           type: array  # REVISAR
-      
-    ValidateResultsRequest:
-      title: Validate Results Request
-      type: object
-      required:
-        - electionId
-      properties:
-        electionId:
-          type: string

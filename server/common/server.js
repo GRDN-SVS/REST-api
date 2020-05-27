@@ -3,16 +3,17 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as http from 'http';
 import * as os from 'os';
+import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser';
 
 import oas from './oas';
 
 import l from './logger';
 
+
 const app = new Express();
 const exit = process.exit;
 
-const mongoose = require('mongoose');
 mongoose.connect(`mongodb://${process.env.DB_ROUTE}`);
 
 export default class ExpressServer {

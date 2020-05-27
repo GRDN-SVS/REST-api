@@ -5,13 +5,7 @@ let electionSchema = new Schema({
     name: String,
     date: Date,
     organizer: String,
-    options: [Number],
-    results: [
-        {
-            option_id: Number,
-            results: Number,
-        }
-    ]
+    options: [Number]
 },
 {
     autoIndex: true,
