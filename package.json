@@ -23,6 +23,7 @@
     "express-openapi-validator": "^3.9.2",
     "fabric-ca-client": "^1.4.8",
     "fabric-network": "^1.4.8",
+    "mongoose": "^5.9.16",
     "pino": "^5.16.0"
   },
   "devDependencies": {

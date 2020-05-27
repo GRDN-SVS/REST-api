@@ -112,6 +112,99 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /vote/submitVote:
+    post:
+      tags:
+        - Vote
+      description: Send new vote to judge
+      requestBody:
+        description: Body needed to submit a vote
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateVoteRequest'
+        required: true
+      responses:
+        201:
+          description: Vote submitted
+          content:
+            applicaction/json:
+              schema:
+                $ref: '#/components/schemas/Vote'
+        4XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /election/getOptions:
+    get:
+      tags:
+        - Options
+      description: Request election options
+      responses:
+        200:
+          description: Return all the Options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Options'
+        4XX:
+          description: Options not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Options not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /election/getResults/{electionId}:
+    get:
+      tags:
+        - Results
+      description: Request election results
+      parameters:
+        - name: electionId
+          in: path
+          description: The id of the election
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return the results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Results'
+        4XX:
+          description: Results not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        5XX:
+          description: Results not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /examples:
     get:
       tags:
@@ -242,6 +335,42 @@ components:
         voterId: 
           type: string
 
+    Vote:
+      type: object
+      properties:
+        nonceId:
+          type: string
+        encryptedVote:
+          type: array  # REVISAR 
+        electionId:
+          type: string
+        clientPublicKey:
+          type: array # REVISAR 
+
+    Options:
+      type: object
+      properties:
+        name:
+          type: string
+        date_birth: 
+          type: string ## REVISAR
+        number:
+          type: string
+        party:
+          type: string
+        background:
+          type: string
+        proposals:
+          type: string
+    
+    Results:
+      type: object
+      properties:
+        optionId:
+          type: string
+        results:
+          type: string
+
     ValidateVoterRequest:
       title: Validate Voter Request Body
       required:
@@ -297,4 +426,31 @@ components:
         success: 
           type: string
         error:
+          type: string
+    
+    ValidateVoteRequest:
+      title: Validate Vote Request
+      type: object
+      required:
+        - nonceId
+        - encryptedVote
+        - electionId
+        - clientPublicKey
+      properties:
+        nonceId:
+          type: string
+        encryptedVote:
+          type: array  # REVISAR
+        electionId:
+          type: string
+        clientPublicKey:
+          type: array  # REVISAR
+      
+    ValidateResultsRequest:
+      title: Validate Results Request
+      type: object
+      required:
+        - electionId
+      properties:
+        electionId:
           type: string

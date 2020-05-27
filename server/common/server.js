@@ -12,6 +12,9 @@ import l from './logger';
 const app = new Express();
 const exit = process.exit;
 
+const mongoose = require('mongoose');
+mongoose.connect(`mongodb://${process.env.DB_ROUTE}`);
+
 export default class ExpressServer {
     constructor() {
         const root = path.normalize(`${__dirname}/../..`);
