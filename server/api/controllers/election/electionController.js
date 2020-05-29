@@ -27,7 +27,14 @@ export class ElectionController {
                 res.send(err);
             }
             else {
-                res.send(results);
+                let finalResults = { results: [] };
+                results[0].results.forEach(option => {
+                    finalResults.results.push({
+                        option_id: option.option_id.toString('utf8'), // CAMBIAR A ENTERO
+                        results: option.results
+                    });
+                });
+                res.send(finalResults);
             }
         });
     }
