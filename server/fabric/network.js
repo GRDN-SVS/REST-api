@@ -189,7 +189,7 @@ class FabricNetwork {
             const ca = gateway.getClient().getCertificateAuthority();
             const adminIdentity = gateway.getCurrentIdentity();
             const secret = await ca.register(
-                { affiliation: 'org1', enrollmentID: voterId, role: 'client' },
+                { enrollmentID: voterId, role: 'client' },
                 adminIdentity,
             );
 
