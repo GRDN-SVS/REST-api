@@ -3,14 +3,19 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as http from 'http';
 import * as os from 'os';
+import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import oas from './oas';
 
 import l from './logger';
 
+
 const app = new Express();
 const exit = process.exit;
+
+mongoose.connect(`mongodb://${process.env.DB_ROUTE}`);
 
 export default class ExpressServer {
     constructor() {
@@ -30,6 +35,7 @@ export default class ExpressServer {
         );
         app.use(cookieParser(process.env.SESSION_SECRET));
         app.use(Express.static(`${root}/public`));
+        app.use(cors())
     }
 
     router(routes) {
