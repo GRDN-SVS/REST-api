@@ -30,7 +30,7 @@ export class ElectionController {
                 let finalResults = { results: [] };
                 results[0].results.forEach(option => {
                     finalResults.results.push({
-                        option_id: option.option_id.toString('utf8'), // CAMBIAR A ENTERO
+                        option_id: option.option_id.readUIntBE(0, option.option_id.lenght),
                         results: option.results
                     });
                 });
