@@ -8,7 +8,7 @@ export class Vote{
      * @param electionId the id of the election
      * @param clientPublicKey  the client's public key 
      */
-    constructor(nonceId, encryptedVote, clientPublicKey) {
+    constructor(nonceId, encryptedVote, electionId, clientPublicKey) {
         this.noceId = nonceId;
         this.encryptedVote = encryptedVote;
         this.electionId = electionId;
