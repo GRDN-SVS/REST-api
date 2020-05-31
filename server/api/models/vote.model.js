@@ -1,5 +1,5 @@
 
-export class Vote{
+export default class Vote{
 
     /**
      * 
