@@ -13,8 +13,9 @@ export class VoteController {
      * 
      */
     async submitVote(req, res) {
-        encryptedVote = new Vote(req.body.nonceId, req.body.encryptedVote, req.electionId, req.body.clientPublicKey);
-        JudgeService.sendEncryptedContent(encryptedVote);
+        let encryptedVote = new Vote(req.body.nonceId, req.body.encryptedVote, req.electionId, req.body.clientPublicKey);
+        let judgeResponse = JudgeService.sendEncryptedContent(encryptedVote);
+        res.send(judgeResponse);
     }
 }
 
