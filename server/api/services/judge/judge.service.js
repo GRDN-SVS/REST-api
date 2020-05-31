@@ -2,10 +2,12 @@ import Axios from 'axios';
 
 class JudgeService {
     
-    async sendEncryptedContent(content) {
+    async sendEncryptedContent(nonceId, encryptedVote, clientPublicKey) {
         try {
             let res = await Axios.post(`${process.env.JUDGE_ENTRY_POINT}/submitVote`, {
-                encryptedVote: content
+                nonceId: nonceId,
+                encryptedVote: encryptedVote,
+                clientPublicKey: clientPublicKey
             });
     
             if (res.error == undefined) {
