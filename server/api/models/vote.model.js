@@ -9,7 +9,7 @@ export default class Vote{
      * @param clientPublicKey  the client's public key 
      */
     constructor(nonceId, encryptedVote, electionId, clientPublicKey) {
-        this.noceId = nonceId;
+        this.nonceId = nonceId;
         this.encryptedVote = encryptedVote;
         this.electionId = electionId;
         this.clientPublicKey = clientPublicKey;
