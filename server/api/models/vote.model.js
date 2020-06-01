@@ -16,7 +16,7 @@ export default class Vote{
     }
 
     getNonceId() {
-        return this.nonceId;
+        return Number(this.nonceId);
     }
     
     setNonceId(nonceId) {
