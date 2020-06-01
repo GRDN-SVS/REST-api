@@ -8,6 +8,9 @@ class JudgeService {
                 nonceId: nonceId,
                 encryptedVote: encryptedVote,
                 clientPublicKey: clientPublicKey
+            },
+            {
+                headers: {'Content-Type': 'application/json'}
             });
     
             if (res.error == undefined) {
