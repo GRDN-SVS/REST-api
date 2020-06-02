@@ -31,7 +31,7 @@ export class ElectionController {
                 results[0].results.forEach(option => {
                     finalResults.results.push({
                         option_id: option.option_id[0],
-                        results: option.results
+                        results: option.result
                     });
                 });
                 res.send(finalResults);
