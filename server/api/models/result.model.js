@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 let resultSchema = new Schema({
     results: [
         {
-            option_id: Buffer,
-            results: Number,
+            option_id: Number,
+            result: Number,
         }
     ]
 },
