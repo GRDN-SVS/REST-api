@@ -28,13 +28,18 @@ export class ElectionController {
             }
             else {
                 let finalResults = { results: [] };
-                results[0].results.forEach(option => {
-                    finalResults.results.push({
-                        option_id: option.option_id,
-                        result: option.result
+                if (results.length > 0) {
+                    results[0].results.forEach(option => {
+                        finalResults.results.push({
+                            option_id: option.option_id,
+                            result: option.result
+                        });
                     });
-                });
-                res.send(finalResults);
+                    res.send(finalResults);
+                }
+                else {
+                    res.send(finalResults);
+                }
             }
         });
     }
