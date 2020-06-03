@@ -3,7 +3,7 @@
   "appAdmin": "app-admin",
   "appAdminSecret": "app-adminpw",
   "orgMSPID": "votermsp",
-  "caName": "https://nb8ac51-voterca.mycluster-675960-5124a5583b2da9b62ba395dca6c2e99b-0000.us-south.containers.appdomain.cloud:7054",
+  "caName": "https://n09c888-voterca.mycluster-647901-5124a5583b2da9b62ba395dca6c2e99b-0000.us-south.containers.appdomain.cloud:7054",
   "userName": "V1",
   "gatewayDiscovery": { "enabled": true, "asLocalhost": false }
 }
